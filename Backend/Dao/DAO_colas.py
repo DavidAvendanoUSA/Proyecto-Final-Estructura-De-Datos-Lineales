@@ -1,8 +1,16 @@
+"""DAO para la tabla `colas`.
+
+Proporciona operaciones CRUD simples y recibe una instancia de
+`config.db.DatabaseConnection` en el constructor.
+"""
+
 from config.db import DatabaseConnection
+import mysql.connector
+
 
 class DAOColas:
-    def __init__(self, DatabaseConnection):
-        self.db_connection = DatabaseConnection
+    def __init__(self, db_connection: DatabaseConnection):
+        self.db_connection = db_connection
 
     # ---------------------------
     # CREATE
@@ -18,11 +26,15 @@ class DAOColas:
             cursor.execute(query, (nombre, n_entrada, n_atendidos, n_no_atendido))
             conn.commit()
             return cursor.lastrowid
+        except mysql.connector.Error as e:
+            print("Error al crear cola (DB):", e)
+            return None
         except Exception as e:
-            print("Error al crear cola:", e)
+            print("Error inesperado al crear cola:", e)
             return None
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # ---------------------------
     # READ - Uno
@@ -34,11 +46,15 @@ class DAOColas:
             cursor = conn.cursor(dictionary=True)
             cursor.execute(query, (cola_id,))
             return cursor.fetchone()
+        except mysql.connector.Error as e:
+            print("Error al obtener cola (DB):", e)
+            return None
         except Exception as e:
-            print("Error al obtener cola:", e)
+            print("Error inesperado al obtener cola:", e)
             return None
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # ---------------------------
     # READ - Todos
@@ -50,11 +66,15 @@ class DAOColas:
             cursor = conn.cursor(dictionary=True)
             cursor.execute(query)
             return cursor.fetchall()
+        except mysql.connector.Error as e:
+            print("Error al obtener colas (DB):", e)
+            return []
         except Exception as e:
-            print("Error al obtener colas:", e)
+            print("Error inesperado al obtener colas:", e)
             return []
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # ---------------------------
     # UPDATE
@@ -74,11 +94,15 @@ class DAOColas:
             cursor.execute(query, (nombre, n_entrada, n_atendidos, n_no_atendido, cola_id))
             conn.commit()
             return cursor.rowcount > 0
+        except mysql.connector.Error as e:
+            print("Error al actualizar cola (DB):", e)
+            return False
         except Exception as e:
-            print("Error al actualizar cola:", e)
+            print("Error inesperado al actualizar cola:", e)
             return False
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # ---------------------------
     # DELETE
@@ -91,8 +115,47 @@ class DAOColas:
             cursor.execute(query, (cola_id,))
             conn.commit()
             return cursor.rowcount > 0
+        except mysql.connector.Error as e:
+            print("Error al eliminar cola (DB):", e)
+            return False
         except Exception as e:
-            print("Error al eliminar cola:", e)
+            print("Error inesperado al eliminar cola:", e)
             return False
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+
+# ---------------------------
+# EJEMPLO DE USO
+# ---------------------------
+if __name__ == "__main__":
+    # Crear instancia de la conexión
+    db_conn = DatabaseConnection()  # Ajusta si requiere host, usuario, password, database
+    dao = DAOColas(db_conn)
+
+    # --- CREATE ---
+    print("Creando cola...")
+    cola_id = dao.crear_cola("Cola1", 10, 5, 2)
+    print("ID creada:", cola_id)
+
+    # --- READ (uno) ---
+    print("Obteniendo cola creada...")
+    cola = dao.obtener_cola(cola_id)
+    print(cola)
+
+    # --- READ (todos) ---
+    print("Obteniendo todas las colas...")
+    todas = dao.obtener_todas()
+    print(todas)
+
+    # --- UPDATE ---
+    print("Actualizando cola...")
+    exito = dao.actualizar_cola(cola_id, "Cola1 Actualizada", 12, 6, 3)
+    print("Actualización exitosa:", exito)
+    print("Cola actualizada:", dao.obtener_cola(cola_id))
+
+    # --- DELETE ---
+    print("Eliminando cola...")
+    exito = dao.eliminar_cola(cola_id)
+    print("Eliminación exitosa:", exito)
+    print("Cola después de eliminar:", dao.obtener_cola(cola_id))

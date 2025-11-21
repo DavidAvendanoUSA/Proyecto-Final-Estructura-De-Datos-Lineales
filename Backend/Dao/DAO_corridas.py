@@ -1,8 +1,15 @@
+"""DAO para operaciones sobre la tabla `corridas`.
+
+Expone `DAOCorridas` que recibe una instancia de
+`config.db.DatabaseConnection` y realiza operaciones CRUD.
+"""
+
 from config.db import DatabaseConnection
 
+
 class DAOCorridas:
-    def __init__(self, DatabaseConnection):
-        self.db_connection = DatabaseConnection
+    def __init__(self, db_connection: DatabaseConnection):
+        self.db_connection = db_connection
 
     # -------------------------------
     # CREATE
@@ -19,7 +26,8 @@ class DAOCorridas:
             print("Error al crear corrida:", e)
             return None
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # -------------------------------
     # READ (uno)
@@ -35,7 +43,8 @@ class DAOCorridas:
             print("Error al obtener corrida:", e)
             return None
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # -------------------------------
     # READ (todos)
@@ -51,7 +60,8 @@ class DAOCorridas:
             print("Error al obtener corridas:", e)
             return []
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # -------------------------------
     # UPDATE
@@ -68,7 +78,8 @@ class DAOCorridas:
             print("Error al actualizar corrida:", e)
             return False
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
 
     # -------------------------------
     # DELETE
@@ -85,4 +96,5 @@ class DAOCorridas:
             print("Error al eliminar corrida:", e)
             return False
         finally:
-            cursor.close()
+            if 'cursor' in locals() and cursor:
+                cursor.close()
