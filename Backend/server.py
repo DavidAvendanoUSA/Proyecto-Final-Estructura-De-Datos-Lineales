@@ -41,7 +41,7 @@ def start_simulacion():
     # Restaurar el simulador con parámetros recibidos
     controller.simulador = controller.simulador.__class__(tiempo, prob_llegada, prob_servicio)
     started = controller.correr()
-    return jsonify({'started': started}), (201 if started else 500)
+    return jsonify({'started': started, 'corrida_id': controller.last_corrida_id}), (201 if started else 500)
 
 
 @app.route('/simulacion/pause', methods=['POST'])

@@ -15,15 +15,20 @@ class DAOColas:
     # ---------------------------
     # CREATE
     # ---------------------------
-    def crear_cola(self, nombre, n_entrada, n_atendidos, n_no_atendido):
+    def crear_cola(self, corrida_id, nombre_id, n_entrada, n_atendidos, n_no_atendidos):
+        """Inserta una fila en la tabla `colas` según `config/db.sql`.
+
+        La tabla espera los campos: (corrida_id, nombre_id, n_entrada,
+        n_atendidos, n_no_atendidos).
+        """
         query = """
-        INSERT INTO colas (Nombre, N_entrada, N_atendidos, N_no_atendido)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO colas (corrida_id, nombre_id, n_entrada, n_atendidos, n_no_atendidos)
+        VALUES (%s, %s, %s, %s, %s)
         """
         try:
             conn = self.db_connection.get_connection()
             cursor = conn.cursor()
-            cursor.execute(query, (nombre, n_entrada, n_atendidos, n_no_atendido))
+            cursor.execute(query, (corrida_id, nombre_id, n_entrada, n_atendidos, n_no_atendidos))
             conn.commit()
             return cursor.lastrowid
         except mysql.connector.Error as e:
@@ -82,10 +87,10 @@ class DAOColas:
     def actualizar_cola(self, cola_id, nombre, n_entrada, n_atendidos, n_no_atendido):
         query = """
         UPDATE colas
-        SET Nombre = %s,
-            N_entrada = %s,
-            N_atendidos = %s,
-            N_no_atendido = %s
+        SET nombre_id = %s,
+            n_entrada = %s,
+            n_atendidos = %s,
+            n_no_atendidos = %s
         WHERE id = %s
         """
         try:
@@ -134,8 +139,11 @@ if __name__ == "__main__":
     dao = DAOColas(db_conn)
 
     # --- CREATE ---
-    print("Creando cola...")
-    cola_id = dao.crear_cola("Cola1", 10, 5, 2)
+    print("Creando corrida de ejemplo y cola...")
+    from Dao.DAO_corridas import DAOCorridas
+    dao_corr = DAOCorridas(db_conn)
+    corrida_id = dao_corr.crear_corrida(0)
+    cola_id = dao.crear_cola(corrida_id, "A", 10, 5, 2)
     print("ID creada:", cola_id)
 
     # --- READ (uno) ---

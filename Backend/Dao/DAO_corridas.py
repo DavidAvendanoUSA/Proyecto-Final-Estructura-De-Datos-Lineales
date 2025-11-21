@@ -15,14 +15,17 @@ class DAOCorridas:
     # CREATE
     # -------------------------------
     def crear_corrida(self, tiempo: int):
-        query = "INSERT INTO corridas (tiempo) VALUES (%s)"
+        # La tabla `corridas` en db.sql define `tiempo` como DATETIME.
+        # Para evitar errores de tipo, guardamos la fecha/hora actual con NOW().
+        query = "INSERT INTO corridas (tiempo) VALUES (NOW())"
         try:
             conn = self.db_connection.get_connection()
             cursor = conn.cursor()
-            cursor.execute(query, (tiempo,))
+            cursor.execute(query)
             conn.commit()
             return cursor.lastrowid
         except Exception as e:
+            # Devolver None y propagar impresión para facilitar debugging
             print("Error al crear corrida:", e)
             return None
         finally:
