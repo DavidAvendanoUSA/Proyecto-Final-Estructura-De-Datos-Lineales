@@ -7,9 +7,20 @@ from Tda.Lista_historial import ListaEnlazadaHistorial
 class SimuladorBanco:
     def __init__(self, tiempo_total_ticks, prob_llegada, prob_servicio):
 
+        # Guarda paerametros iniciales 
+        self.parametros_iniciales = {
+            "tiempo_total": tiempo_total_ticks,
+            "prob_llegada": prob_llegada.copy(),
+            "prob_servicio": prob_servicio.copy(),
+        }
+
         self.tiempo_total = tiempo_total_ticks
         self.prob_llegada = prob_llegada
         self.prob_servicio = prob_servicio
+
+        # Estados Pausas y Detener
+        self.pausado = False
+        self.detener = False
 
         self.cola_prioridad = ColaPrioridadGlobal()
         self.historial = ListaEnlazadaHistorial()
@@ -28,6 +39,32 @@ class SimuladorBanco:
 
         self.next_id = 1
         self.logs = []
+
+   
+    # Metodo pausar simulacion
+    
+    def pausar(self):
+        self.pausado = True
+
+   
+    # Metodo reanudar simulacion
+ 
+    def reanudar(self):
+        self.pausado = False
+
+   
+    # Metodo detener simulacion
+ 
+    def detener_simulacion(self):
+        self.detener = True
+
+   
+    # Metodo restaurar a parametros iniciales
+    
+    def restaurar_parametros(self):
+        self.tiempo_total = self.parametros_iniciales["tiempo_total"]
+        self.prob_llegada = self.parametros_iniciales["prob_llegada"].copy()
+        self.prob_servicio = self.parametros_iniciales["prob_servicio"].copy()
 
     # ------------------------
     # LLEGADAS
@@ -97,9 +134,22 @@ class SimuladorBanco:
     # EJECUTAR SIMULACIÓN
     # ------------------------
     def run(self):
-        # simulación en memoria: eventos registrados en self.logs (sin imprimir)
 
         for t in range(self.tiempo_total):
+
+            
+            # DETENIDA → parar
+          
+            if self.detener:
+                break
+
+          
+            #  PAUSADA → esperar
+            
+            while self.pausado:
+                pass  
+
+            # Programa normal
             self.generar_llegadas(t)
             self.asignar_ventanillas(t)
             self.procesar_ventanillas(t)
