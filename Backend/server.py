@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from config.db import DatabaseConnection
 from Dao.DAO_colas import DAOColas
@@ -11,10 +11,13 @@ DEFAULT_PROB_LLEGADA = {'A': 0.1, 'M': 0.05, 'B': 0.02}
 DEFAULT_PROB_SERVICIO = {'A': 0.7, 'M': 0.6, 'B': 0.5}
 DEFAULT_TIEMPO = 100
 
-
-app = Flask(__name__)
+# Indicar a Flask dónde están templates y static (tu front está en ../frontend)
+app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 CORS(app)
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 # Bootstrap: crear conexión y DAOs
 db_conn = DatabaseConnection()

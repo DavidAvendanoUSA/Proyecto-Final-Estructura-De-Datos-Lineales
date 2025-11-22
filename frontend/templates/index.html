@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Simulador Del Banco</title>
+  </head>
+  <body>
+    <main>
+      <h1>Simulador del Banco</h1>
+
+      <section>
+        <h2>Iniciar simulación</h2>
+        <form id="simForm" onsubmit="return false;">
+          <label
+            >Tiempo total:
+            <input
+              type="number"
+              id="tiempo"
+              placeholder="ticks (ej. 100)"
+              min="0"
+            />
+          </label>
+          <br />
+          <fieldset>
+            <legend>Probabilidad de llegada (A, M, B)</legend>
+            <label
+              >A:
+              <input
+                type="number"
+                id="prob_llegada_A"
+                step="0.01"
+                placeholder="0.10"
+                min="0"
+                max="1"
+            /></label>
+            <label
+              >M:
+              <input
+                type="number"
+                id="prob_llegada_M"
+                step="0.01"
+                placeholder="0.05"
+                min="0"
+                max="1"
+            /></label>
+            <label
+              >B:
+              <input
+                type="number"
+                id="prob_llegada_B"
+                step="0.01"
+                placeholder="0.02"
+                min="0"
+                max="1"
+            /></label>
+          </fieldset>
+          <br />
+          <fieldset>
+            <legend>Probabilidad de servicio (A, M, B)</legend>
+            <label
+              >A:
+              <input
+                type="number"
+                id="prob_servicio_A"
+                step="0.01"
+                placeholder="0.70"
+                min="0"
+                max="1"
+            /></label>
+            <label
+              >M:
+              <input
+                type="number"
+                id="prob_servicio_M"
+                step="0.01"
+                placeholder="0.60"
+                min="0"
+                max="1"
+            /></label>
+            <label
+              >B:
+              <input
+                type="number"
+                id="prob_servicio_B"
+                step="0.01"
+                placeholder="0.50"
+                min="0"
+                max="1"
+            /></label>
+          </fieldset>
+          <br />
+          <button id="btnStart">Iniciar simulación</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Controles</h2>
+        <button id="btnPause">Pausar</button>
+        <button id="btnResume">Reanudar</button>
+        <button id="btnStop">Detener</button>
+        <button id="btnRestore">Restaurar valores</button>
+      </section>
+
+      <section>
+        <h2>Consultar</h2>
+        <button id="btnStatus">Ver estado</button>
+        <!-- El botón para "Ver resultado (visual)" se ha eliminado porque la vista se muestra automáticamente al terminar -->
+      </section>
+
+      <section
+        id="preparingSection"
+        aria-live="polite"
+        style="display: none; margin-top: 1rem"
+      >
+        <h2>Preparando ejecución</h2>
+        <p id="preparingText">Iniciando...</p>
+      </section>
+
+      <!-- Visor de actividad (mensajes legibles) -->
+      <section aria-live="polite" style="margin-top: 1rem">
+        <h2>Visor de actividad</h2>
+        <pre id="result">
+Aquí se mostrarán mensajes legibles sobre la simulación.</pre
+        >
+      </section>
+
+      <!-- Visualización interactiva (sin dependencias, estilo inline mínimo) -->
+      <section id="visualizationSection" style="margin-top: 1rem">
+        <h2>Visualización de colas (resultado)</h2>
+        <p style="margin: 0 0 8px 0; color: #333; font-size: 13px">
+          Nota: los números mostrados en el eje X son "ticks" — la unidad de
+          tiempo de la simulación.
+        </p>
+        <div
+          id="vizContainer"
+          style="position: relative; min-height: 200px"
+        ></div>
+      </section>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+  </body>
+</html>
